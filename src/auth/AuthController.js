@@ -28,7 +28,6 @@ router.post('/register', (req, res) => {
     // Create a new User instance and save it in DB.
     User.create({
         name: req.body.name, 
-        email: req.body.email,
         password: hashedPaswword
     },
     (err, user) => {
@@ -42,9 +41,9 @@ router.post('/register', (req, res) => {
 });
 
 // GET: SPECIFIC USER DETAILS FROM DB
-router.get('/identify', (req, res) => {
+router.post('/identify', (req, res) => {
     // Get token from request header.
-    let token = req.headers['x-access-token'];
+    let token = req.body.token;
     if (!token) return res.status(401).send({ auth: false, message: 
         'No token provided.' });
 
