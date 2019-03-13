@@ -13,7 +13,6 @@ var User = require('./User');
 router.post('/', function (req, res) {
     User.create({
             name : req.body.name,
-            email : req.body.email,
             password : req.body.password
         }, 
         function (err, user) {
