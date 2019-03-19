@@ -50,5 +50,63 @@ router.post('/get_access_token', function(req, res) {
     });
 });
 
+// GET: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
+router.get('/accounts', function(req, res) {
+    // Retrieve information by validating token in the request header.
+    plaidClient.getBalance(req.headers.authorization, function(error, result) {
+        // If error, return error message. 
+        if ( error ) return res.status(401).send({ error: true, message: 
+            JSON.stringify(error) });
+        
+        // If not, send back response with accounts object plus aggregated balance.
+        return res.status(200).send({ error: false, accounts: result.accounts,
+            balance: computeTotalBalance(result.accounts) 
+        });
+    });
+});
+
+// GET: RETURNS ALL TRANSACTIONS FOR A GIVEN ITEM
+router.get('/yearly_transactions', function(req, res) {
+    let startDate = moment().subtract(365, 'days').format('YYYY-MM-DD');
+    let endDate = moment().format('YYYY-MM-DD')
+    plaidClient.getAllTransactions(req.headers.authorization, startDate, endDate, function(error, result) {
+        // If error, return error message. 
+        if ( error ) return res.status(401).send({ error: true, message: 
+            JSON.stringify(error) });
+
+        // If not, send back response with accounts object plus aggregated balance.
+        return res.status(200).send({ error: false, response: result });
+    })
+})
+
+router.get('/monthly_transactions', function(req, res){
+    let startDate = moment().subtract(30, 'days').format('YYYY-MM-DD');
+    let endDate = moment().format('YYYY-MM-DD')
+
+    plaidClient.getTransactions(req.headers.authorization, startDate, endDate, function(error, result) {
+        // If error, return error message. 
+        if ( error ) return res.status(401).send({ error: true, message: 
+            JSON.stringify(error) });
+
+        // If not, send back response with accounts object plus aggregated balance.
+        return res.status(200).send({ error: false, response: result });
+    })
+})
+
+
+            ///* Helper Methods *///
+
+const computeTotalBalance = (accounts) => {
+    // Initialize counter and set to 0.
+    let totalBalance = 0;
+    // Iterate over accounts array and for each one of them,
+    // sum the balance amount to the counter variable.
+    accounts.forEach( account => {
+        totalBalance = totalBalance + account.balances.current
+    })
+    // Return the final counter.
+    return totalBalance
+}
+
 // Export router 
 module.exports = router; 
