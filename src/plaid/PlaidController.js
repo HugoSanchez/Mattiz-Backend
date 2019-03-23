@@ -72,25 +72,28 @@ router.get('/accounts', function(req, res) {
     });
 });
 
-// GET: RETURNS ALL TRANSACTIONS FOR A GIVEN ITEM
+// GET: FOR A GIVEN NUMBER OF ACCOUNTS, 
+// IT RETURNS A UNIFIED ARRAY OF TRANSACTIONS FOR THE LAST YEAR. 
 router.get('/yearly_transactions', function(req, res) {
 
     // Set end and start dates.
     let startDate = moment().subtract(365, 'days').format('YYYY-MM-DD');
     let endDate = moment().format('YYYY-MM-DD')
 
-    // Retrieve transaction information.
-    plaidClient.getAllTransactions(req.headers.authorization, startDate, endDate, function(error, result) {
-        // If error, return error message. 
-        if ( error ) return res.status(401).send({ error: true, message: 
-            JSON.stringify(error) });
-
-        // If not, send back response with all transaction result.
-        return res.status(200).send({ error: false, data: result });
-    });
+     // Iterate over every access token, and return the asociated transactions.
+     retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate)
+        // Return all transactions merged toghether and sorted by date.
+        .then(result => { return res.status(200)
+            .send({ error: false, data: sortByDate(result[0].concat(result[1])) })
+        })
+        // Return error if occurs (this should be tested), 
+        .catch(error => { return res.status(401)
+            .send({ error: true, message:  JSON.stringify(error)})
+        });
 });
 
-// GET: FOR A GIVEN NUMBER OF ACCOUNTS, IT RETURNS A UNIFIED ARRAY OF TRANSACTIONS FOR THE LAST 90 DAYS. 
+// GET: FOR A GIVEN NUMBER OF ACCOUNTS, 
+// IT RETURNS A UNIFIED ARRAY OF TRANSACTIONS FOR THE LAST 90 DAYS. 
 router.get('/last_90_days_transactions', async function(req, res){
 
     // Set end and start dates.
@@ -107,7 +110,7 @@ router.get('/last_90_days_transactions', async function(req, res){
         .catch(error => { return res.status(401)
             .send({ error: true, message:  JSON.stringify(error)})
         });
-            
+
 });
 
 
