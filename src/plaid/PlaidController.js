@@ -98,11 +98,16 @@ router.get('/last_90_days_transactions', async function(req, res){
     let endDate = moment().format('YYYY-MM-DD')    
 
     // Iterate over every access token, and return the asociated transactions.
-    retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate).then(result => {
-        // Merge all transactions toghether sorted by date.
-        unifiedTransactionArray = sortByDate(result[0].concat(result[1]))
-    })
-
+    retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate)
+        // Return all transactions merged toghether and sorted by date.
+        .then(result => { return res.status(200)
+            .send({ error: false, data: sortByDate(result[0].concat(result[1])) })
+        })
+        // Return error if occurs (this should be tested), 
+        .catch(error => { return res.status(401)
+            .send({ error: true, message:  JSON.stringify(error)})
+        });
+            
 });
 
 
@@ -134,13 +139,17 @@ const retrieveTransactionsForEachAccount = async ( accessTokenArray, startDate, 
 
 // Plaid .getTransactions() method wraped as a promise. 
 const getTransactionsPromsise = (access_token, startDate, endDate) => {
+    // Create the promise, 
     return new Promise( function(resolve, reject) {
+        // Call plaid method,
         plaidClient.getTransactions(access_token, startDate, endDate, function(error, result) {
+            // Reject if error,
             if (error) { reject(error) };
+            // If not, return the transactions array. 
             resolve(result.transactions);
         }
     )}
-)}
+)};
 
 // Concat arrays.
 function merge(arrays) {
