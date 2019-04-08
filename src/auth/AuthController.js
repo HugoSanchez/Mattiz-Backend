@@ -37,7 +37,7 @@ router.post('/register', (req, res) => {
 
         // If succesful, create token and return 200.
         let token = jwt.sign({id: user._id }, config.secret)
-        res.status(200).send({ auth: true, token: token }); 
+        res.status(200).send({ auth: true, token: token, user: user }); 
     });
 });
 

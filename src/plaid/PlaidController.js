@@ -59,17 +59,13 @@ router.post('/get_access_token', function(req, res) {
 // GET: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
 router.get('/accounts', function(req, res) {
 
-    // Retrieve information by validating token in the request header.
-    plaidClient.getBalance(req.headers.authorization, function(error, result) {
-        // If error, return error message. 
-        if ( error ) return res.status(401).send({ error: true, message: 
-            JSON.stringify(error) });
-        
-        // If not, send back response with accounts object plus aggregated balance.
-        return res.status(200).send({ error: false, accounts: result.accounts,
-            balance: computeTotalBalance(result.accounts) 
-        });
-    });
+    getBalancesForEachAccount(req.body.accessTokenArray)
+        .then(result => { return res.status(200)
+            .send({ error: false, data: JSON.stringify(result) })
+        })
+        .catch(error => { return res.status(401)
+            .send({ error: true, message:  JSON.stringify(error)})
+        })
 });
 
 // GET: FOR A GIVEN NUMBER OF ACCOUNTS, 
@@ -116,6 +112,26 @@ router.get('/last_90_days_transactions', async function(req, res){
 
 ///* Helper Methods *///
 
+const getBalancesForEachAccount = async ( accessTokenArray ) => {
+
+    return await Promise.all(accessTokenArray.map(async acces_token => {
+
+        return await getBalancePromise(acces_token)
+    })) 
+}
+
+const getBalancePromise = ( access_token ) => {
+    //
+    return new Promise ( function(resolve, reject) {
+        //
+        plaidClient.getBalance(access_token, function(error, result) {
+            // Reject if error,
+            if (error) { reject(error) };
+            //
+            resolve(computeTotalBalance(result.accounts))
+        })
+    })
+}
 
 const computeTotalBalance = (accounts) => {
     // Initialize counter and set to 0.
@@ -130,11 +146,13 @@ const computeTotalBalance = (accounts) => {
 }
 
 // Returns a promise which resolves to an array of arrays each containing the corresponding transactions. 
-const retrieveTransactionsForEachAccount = async ( accessTokenArray, startDate, endDate ) => {
+const retrieveTransactionsForEachAccount = 
+    // Expected params.
+    async ( accessTokenArray, startDate, endDate ) => {
     // For each access token,
-    return Promise.all(accessTokenArray.map(access_token => {
+    return await Promise.all(accessTokenArray.map(async access_token => {
         // it calls getTransactionsPromsise() helper method. 
-        return getTransactionsPromsise(access_token, startDate, endDate);
+        return await getTransactionsPromsise(access_token, startDate, endDate);
     }))
     // For every transaction array it returns, merge them into a single array. 
     .then(merge) 
@@ -150,9 +168,9 @@ const getTransactionsPromsise = (access_token, startDate, endDate) => {
             if (error) { reject(error) };
             // If not, return the transactions array. 
             resolve(result.transactions);
-        }
-    )}
-)};
+        });
+    });
+};
 
 // Concat arrays.
 function merge(arrays) {
@@ -164,9 +182,9 @@ function merge(arrays) {
 const sortByDate = (array) => {
     // Iterate over array
     return array.sort((a, b) => {
-        // subtracting the first element to the second. 
-        return new Date(b.date) - new Date(a.date)
-    })
+        // 'subtracting' the first element to the second. 
+        return new Date(b.date) - new Date(a.date);
+    });
 }
 
 // Export router 
