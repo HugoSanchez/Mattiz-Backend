@@ -39,7 +39,7 @@ const plaidClient = new plaid.Client (
 
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
 router.post('/get_access_token', function(req, res) {
-
+    console.log('HIT EXCHANGE PUBLIC FOR ACCESS')
     // First, get the public_token and return error if it doesn't exist. 
     if ( !req.body.public_token ) return res.status(401).send({ error: true, message: 
         'No token provided.' });
@@ -56,21 +56,28 @@ router.post('/get_access_token', function(req, res) {
     });
 });
 
-// GET: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
-router.get('/accounts', function(req, res) {
+// POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
+router.post('/test', function(req, res) {
+    console.log('HIT /test ENDPOINT: ', req.body)
+    return res.status(200).send({ error: false, data: JSON.stringify(req.body.accessTokenArray) })
+});
 
+// POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
+router.post('/accounts', function(req, res) {
+
+    console.log('HIT /accounts ENDPOINT: ', req.body)
     getBalancesForEachAccount(req.body.accessTokenArray)
         .then(result => { return res.status(200)
-            .send({ error: false, data: JSON.stringify(result) })
+            .send({ error: false, balance: JSON.stringify(result) })
         })
         .catch(error => { return res.status(401)
             .send({ error: true, message:  JSON.stringify(error)})
         })
 });
 
-// GET: FOR A GIVEN NUMBER OF ACCOUNTS, 
+// POST: FOR A GIVEN NUMBER OF ACCOUNTS, 
 // IT RETURNS A UNIFIED ARRAY OF TRANSACTIONS FOR THE LAST YEAR. 
-router.get('/yearly_transactions', function(req, res) {
+router.post('/yearly_transactions', function(req, res) {
 
     // Set end and start dates.
     let startDate = moment().subtract(365, 'days').format('YYYY-MM-DD');
@@ -88,9 +95,9 @@ router.get('/yearly_transactions', function(req, res) {
         });
 });
 
-// GET: FOR A GIVEN NUMBER OF ACCOUNTS, 
+// POST: FOR A GIVEN NUMBER OF ACCOUNTS, 
 // IT RETURNS A UNIFIED ARRAY OF TRANSACTIONS FOR THE LAST 90 DAYS. 
-router.get('/last_90_days_transactions', async function(req, res){
+router.post('/last_90_days_transactions', async function(req, res){
 
     // Set end and start dates.
     let startDate = moment().subtract(90, 'days').format('YYYY-MM-DD');
@@ -100,7 +107,7 @@ router.get('/last_90_days_transactions', async function(req, res){
     retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate)
         // Return all transactions merged toghether and sorted by date.
         .then(result => { return res.status(200)
-            .send({ error: false, data: sortByDate(result[0].concat(result[1])) })
+            .send({ error: false, tx: sortByDate(result[0].concat(result[1])) })
         })
         // Return error if occurs (this should be tested), 
         .catch(error => { return res.status(401)

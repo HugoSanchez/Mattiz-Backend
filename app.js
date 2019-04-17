@@ -14,4 +14,8 @@ app.use('/api/auth', AuthController);
 const PlaidController = require('./src/plaid/PlaidController');
 app.use('/api/plaid', PlaidController);
 
+/* Import MarketDataController routes */
+const MarketDataController = require('./src/data/MarketDataController');
+app.use('/api/data', MarketDataController);
+
 module.exports = app;
