@@ -24,9 +24,11 @@ router.get('/get_historical_data', function(req, res) {
     axios.get(
         'https://api.nomics.com/v1/exchange-rates/history?key=' 
         + config.nomics.key
-        + '&currency=ETH&start=2018-01-01T00%3A00%3A00Z&end=2019-04-17T00%3A00%3A00Z'
+        + '&currency=ETH&start=2018-01-01T00%3A00%3A00Z&end=2019-04-18T00%3A00%3A00Z'
         )
-        .then( response => res.status(200).send({ error: false, marketData: response.data }))
+        .then( async response => {
+            res.status(200).send({ error: false, rates: response.data.map(d =>  d.rate) })
+        })
         .catch(err => console.log(err))
 
     // res.status(200).send({ error: false, marketData: JSON.stringify(data) })
