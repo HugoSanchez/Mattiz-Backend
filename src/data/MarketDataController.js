@@ -27,11 +27,12 @@ router.get('/get_historical_data', function(req, res) {
         + '&currency=ETH&start=2018-01-01T00%3A00%3A00Z&end=2019-04-18T00%3A00%3A00Z'
         )
         .then( async response => {
-            res.status(200).send({ error: false, rates: response.data.map(d =>  d.rate) })
+            res.status(200).send({ 
+                error: false, 
+                rates: response.data.map(d =>  parseFloat(d.rate).toFixed(2))
+            })
         })
         .catch(err => console.log(err))
-
-    // res.status(200).send({ error: false, marketData: JSON.stringify(data) })
 });
 
 // Export router 
