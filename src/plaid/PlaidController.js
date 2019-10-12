@@ -39,7 +39,7 @@ const plaidClient = new plaid.Client (
 
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
 router.post('/get_access_token', function(req, res) {
-    console.log('HIT EXCHANGE PUBLIC FOR ACCESS')
+    console.log('JIT!')
     // First, get the public_token and return error if it doesn't exist. 
     if ( !req.body.public_token ) return res.status(401).send({ error: true, message: 
         'No token provided.' });
@@ -58,7 +58,6 @@ router.post('/get_access_token', function(req, res) {
 
 // POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
 router.post('/test', function(req, res) {
-    console.log('HIT /test ENDPOINT: ', req.body)
     return res.status(200).send({ error: false, data: JSON.stringify(req.body.accessTokenArray) })
 });
 
@@ -113,7 +112,6 @@ router.post('/last_90_days_transactions', async function(req, res){
         .catch(error => { return res.status(401)
             .send({ error: true, message:  JSON.stringify(error)})
         });
-
 });
 
 
