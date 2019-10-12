@@ -8,28 +8,21 @@ const bodyParser = require('body-parser');
 // AUTH/CRYPTO DEPENDENCIES
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const crypto = require('crypto')
 const config = require('../../config');
 
 // USER SCHEMA
 const User = require('../user/User');
 
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
-router.use(decryptBody)
+// // ROUTER ENCODING ATRIBUTES 
+// router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.json());
 
-const decryptBody = (req, res, next) => {
-    console.log("\nEncrypted body: ", req.body, "\n\n")
-    req.body = decryptData(req.body.data, "password")
-    console.log("\nDecrypted body: ", req.body, "\n\n")
-    next()
-}
-
-            ///* Auth Routes *///
+///* Auth Routes *///
 
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
+    console.log("User registered")
+    debugger
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);
 
@@ -94,59 +87,6 @@ router.post('/login', (req, res) => {
         res.status(200).send({ auth: true, token: token, user: user });
     });
 });
-
-// ENCRYPTION HELPER METHODS
-const generateKey = (password) => {
-  return crypto.createHash('sha256')
-          .update(password)
-          .digest()
-}
-
-const generateIv = (ivString) => {
-  const iv16Bytes = Buffer.allocUnsafe(16)
-  const iv32Bytes = crypto.createHash('sha256')
-                    .update(ivString)
-                    .digest()
-
-  iv32Bytes.copy(iv16Bytes)
-
-  return iv16Bytes
-}
-
-const generateCipher = (password, ivString) => {
-  return crypto.createCipheriv(
-    'aes256', 
-    generateKey(password),
-    generateIv(ivString)
-  )
-}
-
-const generateDecipher = (password, ivString) => {
-  return crypto.createDecipheriv(
-    'aes256', 
-    generateKey(password),
-    generateIv(ivString)
-  )
-}
-
-const encryptData = (data, password) => {
-    const plainText = JSON.stringify(data)
-  const cipher = generateCipher(password, "IVString")
-
-  let encrypted = cipher.update(plainText, 'binary', 'hex')
-  encrypted += cipher.final('hex')
-
-  return encrypted
-}
-
-const decryptData = (cipherText, password) => {
-  const decipher = generateDecipher(password, "IVString")
-
-  let decrypted = decipher.update(cipherText, 'hex', 'binary')
-  decrypted += decipher.final('binary')
-
-  return JSON.parse(decrypted)
-}
 
 // Export router 
 module.exports = router; 

@@ -12,9 +12,9 @@ const plaid = require('plaid');
 // CONFIG FILE 
 const config = require('../../config');
 
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
+// // ROUTER ENCODING ATRIBUTES 
+// router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.json());
 
 // PLAID CONFIG
 const client_id = config.plaid.client_id;
