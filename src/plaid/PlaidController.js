@@ -9,17 +9,17 @@ const bodyParser = require('body-parser');
 const moment = require('moment');
 const plaid = require('plaid');
 
-// CONFIG FILE 
-const config = require('../../config');
+// LOAD ENVIRONMENT VARIABLES
+require('dotenv').config()
 
 // ROUTER ENCODING ATRIBUTES 
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
 // PLAID CONFIG
-const client_id = config.plaid.client_id;
-const secret = config.plaid.secret;
-const public_key = config.plaid.public_key;
+const client_id = process.env.PLAID_CLIENT_ID;
+const secret = process.env.PLAID_SECRET;
+const public_key = process.env.PLAID_PUBLIC_KEY;
 const plaid_env = plaid.environments.sandbox;
 const version = { version: '2018-05-22' };
 
@@ -39,7 +39,6 @@ const plaidClient = new plaid.Client (
 
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
 router.post('/get_access_token', function(req, res) {
-    console.log('JIT!')
     // First, get the public_token and return error if it doesn't exist. 
     if ( !req.body.public_token ) return res.status(401).send({ error: true, message: 
         'No token provided.' });
@@ -57,14 +56,8 @@ router.post('/get_access_token', function(req, res) {
 });
 
 // POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
-router.post('/test', function(req, res) {
-    return res.status(200).send({ error: false, data: JSON.stringify(req.body.accessTokenArray) })
-});
-
-// POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
 router.post('/accounts', function(req, res) {
 
-    console.log('HIT /accounts ENDPOINT: ', req.body)
     getBalancesForEachAccount(req.body.accessTokenArray)
         .then(result => { return res.status(200)
             .send({ error: false, balance: JSON.stringify(result) })

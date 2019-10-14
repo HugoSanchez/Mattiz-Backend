@@ -8,8 +8,9 @@ const bodyParser = require('body-parser');
 const moment = require('moment');
 const axios = require('axios');
 
-// CONFIG FILE 
-const config = require('../../config');
+// LOAD ENVIRONMENT VARIABLES
+require('dotenv').config()
+
 
 // ROUTER ENCODING ATRIBUTES 
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -30,7 +31,7 @@ router.post('/get_historical_data', function(req, res) {
     
     // Call Nomics API.
     axios.get('https://api.nomics.com/v1/exchange-rates/history?key=' 
-    + config.nomics.key + '&currency=' + currency
+    + process.env.NOMICS_KEY + '&currency=' + currency
     + '&start='+ startTime + 'T00%3A00%3A00Z'
     + '&end=' + dayAndHour + '%3A' + minutes + '%3A00Z')
         // Then send status 200 with rates array.

@@ -1,5 +1,3 @@
-     ///* Dependencies & Set Up */// 
-
 // SERVER SIDE DEPENDENCIES
 const express = require('express');
 const router = express.Router();
@@ -8,7 +6,9 @@ const bodyParser = require('body-parser');
 // AUTH/CRYPTO DEPENDENCIES
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const config = require('../../config');
+
+// LOAD ENVIRONMENT VARIABLES
+require('dotenv').config()
 
 // USER SCHEMA
 const User = require('../user/User');
@@ -17,8 +17,6 @@ const User = require('../user/User');
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 
-
-            ///* Auth Routes *///
 
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
@@ -36,7 +34,7 @@ router.post('/register', (req, res) => {
         if (err) return res.status(500).send('There was a problem registering the user.')
 
         // If succesful, create token and return 200.
-        let token = jwt.sign({id: user._id }, config.secret)
+        let token = jwt.sign({id: user._id }, process.env.SECRET)
         res.status(200).send({ auth: true, token: token, user: user }); 
     });
 });
@@ -49,7 +47,7 @@ router.post('/identify', (req, res) => {
         'No token provided.' });
 
     // Retrieve id from token.
-    jwt.verify(token, config.secret, (err, decoded) => {
+    jwt.verify(token, process.env.SECRET, (err, decoded) => {
         if (err) return res.status(500).send({ auth: false, message: 
             'Failed to authenticate token.' });
         
@@ -67,7 +65,7 @@ router.post('/identify', (req, res) => {
 
 // POST: LOGIN ROUTE
 router.post('/login', (req, res) => {
-    console.log('Id: ', req.body._id)
+
     User.findById(req.body._id , (err, user) => {
         // Handle error cases.
         if (err) return res.status(500).send('Error on the server.');
@@ -80,7 +78,7 @@ router.post('/login', (req, res) => {
         if (!passwordIsValid) return res.status(401).send({ auth: false, token: null });
 
         // If password is valid create session token,
-        let token = jwt.sign({id: user._id}, config.secret, {
+        let token = jwt.sign({id: user._id}, process.env.SECRET, {
             expiresIn: 86400    // 24 hours expiration time 
         });
         // and send response. 
