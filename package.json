@@ -15,6 +15,7 @@
     "body-parser": "^1.18.3",
     "dotenv": "^8.1.0",
     "envvar": "^2.0.0",
+    "etherlime-lib": "^1.1.5",
     "ethers": "^4.0.39",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.5.0",
