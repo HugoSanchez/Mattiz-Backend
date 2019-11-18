@@ -50,6 +50,7 @@ router.post('/get_access_token', function(req, res) {
         JSON.stringify(error) });
         
         // If not, send access_token and item_id as response.
+        console.log('ACC_TOKEN: ', token.access_token)
         return res.status(200).send({ error: false, 
         access_token: token.access_token, item_id: token.item_id });
     });

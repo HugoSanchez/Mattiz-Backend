@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 // AUTH/CRYPTO DEPENDENCIES
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const ethers = require('ethers');
 
 // LOAD ENVIRONMENT VARIABLES
 require('dotenv').config()
@@ -20,7 +21,6 @@ router.use(bodyParser.json());
 
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
-    console.log(req.body)
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);
 
@@ -34,8 +34,9 @@ router.post('/register', (req, res) => {
         if (err) return res.status(500).send('There was a problem registering the user.')
 
         // If succesful, create token and return 200.
+        let wallet = ethers.Wallet.createRandom()
         let token = jwt.sign({id: user._id }, process.env.SECRET)
-        res.status(200).send({ auth: true, token: token, user: user }); 
+        res.status(200).send({ auth: true, token: token, user: user, ethKey: wallet.privateKey }); 
     });
 });
 
