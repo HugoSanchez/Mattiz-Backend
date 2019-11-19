@@ -30,7 +30,10 @@ const ZERO_BYTES32 = ethers.constants.HashZero;
 const ACTION_TRANSFER = 0;
 
 // const DeployManager = require('../utils/argent-utils/deploy-manager.js');
-const DeployManager = new etherlime.EtherlimeGanacheDeployer()
+// const DeployManager = new etherlime.EtherlimeGanacheDeployer()
+
+const deployManager = require('../utils/argent-utils/deploy-manager')
+const DeployManager = deployManager('ganache')
 
 // Provider.
 const url = "http://localhost:8545";
