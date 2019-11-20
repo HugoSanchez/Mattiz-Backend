@@ -1,3 +1,12 @@
-const deployFactory = require('./utils/argent-utils/scripts/deploy-factory');
+const deployFactory = require('./deployment/deploy-factory');
+const deployWallet = require('./deployment/deploy-wallet');
+const deployModules = require('./deployment/deploy-modules');
 
-deployFactory('ganache')
+
+async function main(){
+    await deployModules('ganache')
+    await deployFactory('ganache')
+    await deployWallet('ganache')
+} 
+
+main()
