@@ -1,4 +1,3 @@
-const fs = require('fs');
 const ethers = require('ethers');
 const updateConfigFile = require('../utils/argent-utils/update-config');
 
@@ -49,8 +48,10 @@ const deployModules = async (network) => {
     console.log('04 - Module Registry: ', ModuleRegistryWrapper.contractAddress);
     // Deploy Kyber contract to mock on ganache.
     let KyberNetworkWrapper
-    if (network === 'ganache') { KyberNetworkWrapper = await DeployManager.deployer.deploy(KyberNetwork) }
-    if (network === 'ropsten') { KyberNetworkWrapper = await DeployManager.deployer.wrapDeployedContract(KyberNetwork, config.Kyber.contract) }
+    if (network === 'ganache') { 
+        KyberNetworkWrapper = await DeployManager.deployer.deploy(KyberNetwork)};
+    if (network === 'ropsten') { 
+        KyberNetworkWrapper = DeployManager.deployer.wrapDeployedContract(KyberNetwork, config.Kyber.contract)};
     console.log('05 - Kyber Contract: ', KyberNetworkWrapper.contractAddress);
     // Deploy price provider.
     let TokenPriceProviderWrapper = await DeployManager.deployer.deploy(TokenPriceProvider, {}, KyberNetworkWrapper.contractAddress);
