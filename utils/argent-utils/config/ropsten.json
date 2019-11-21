@@ -36,7 +36,7 @@
   },
   "contracts": {
     "MultiSigWallet": "0xa00f6A3a3D00979D7B7E23D7C7dF6CC7E255Ad88",
-    "WalletFactory": "0x79B960d71977082d1e273e9190a5EF9783fFa24d",
+    "WalletFactory": "0xf676C110949d29F8bF5f263D28013D330aa74Ce6",
     "ENSResolver": "0x6dBc7D9Daff55d05eb2b9cA036b2cc25279f6b31",
     "ENSManager": "0x01782Df6C7b8b3603e426C8fe38885a51aB00737",
     "ENSRegistry": "0x112234455c3a32fd11230c42e7bccd4a84e02010",
@@ -44,7 +44,7 @@
     "TokenPriceProvider": "0xEE37589c34841B8C04CefaA35Dce5c3792a4B9a9",
     "ModuleRegistry": "0x45c14275d909c9442adBf57D26DC1B1cd27db2D5",
     "DappRegistry": "0xD23Dc5fEE094850C45A5aEB2504d5456C74F6508",
-    "BaseWallet": "0xEE43f3f33d2972441251887FbB7C64D2fD55677f"
+    "BaseWallet": "0x91B86ED45E03BAF741073ec3eA49bf7D2f37C521"
   },
   "modules": {
     "GuardianStorage": "0x3BCdc0C84333d546067D31F9Ba3048C3abbB1d5f",

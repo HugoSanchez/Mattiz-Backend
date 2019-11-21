@@ -4,9 +4,11 @@ require('dotenv').config();
 const ethers = require('ethers');
 
 const deployENS = require('./deployment/deploy-ens')
-const deployManager = require('./utils/argent-utils/deploy-manager');
-const DeployManager = deployManager('ropsten');
 const deployModules = require('./deployment/deploy-modules');
+const deployFactory = require('./deployment/deploy-factory');
+
+const deployManager = require('./utils/argent-utils/deploy-manager');
+const DeployManager = deployManager('ropsten'); 
 
 
 /** 
@@ -75,7 +77,7 @@ let x = async () => {
 // main()
 // testWallet()
 
-deployModules('ropsten')
+deployFactory('ropsten')
 
 
 // x()

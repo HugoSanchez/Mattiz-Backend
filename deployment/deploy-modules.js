@@ -207,7 +207,7 @@ const deployModules = async (network) => {
     config.contracts.ModuleRegistry = ModuleRegistryWrapper.contractAddress
 
     // Save changes.
-    updateConfigFile(DeployManager.network, config)
+    updateConfigFile(network, config)
     console.log('DONE.')
 };
 
