@@ -15,7 +15,6 @@ const deployENS = async DeployManager => {
 
     let contracts = DeployManager.config.contracts
     let wallet = DeployManager.wallet
-    let signer = DeployManager.deployer.signer
     let ensRegistry
 
     if (DeployManager.network === 'ganache') { 
@@ -51,14 +50,14 @@ const deployENS = async DeployManager => {
         await ensRegistry.setSubnodeOwner(ethers.utils.namehash(root), ethers.utils.keccak256(ethers.utils.toUtf8Bytes(subnameWallet)), ensManager.contractAddress, {gasLimit: 1000000});
         await ensRegistry.setSubnodeOwner(ZERO_BYTES32, ethers.utils.keccak256(ethers.utils.toUtf8Bytes('reverse')), wallet.address, {gasLimit: 1000000});
         await ensRegistry.setSubnodeOwner(ethers.utils.namehash('reverse'), ethers.utils.keccak256(ethers.utils.toUtf8Bytes('addr')), ensReverse.contractAddress, {gasLimit: 1000000});
-        console.log('10 - New Subnode owners.') }
+        console.log('09 - New Subnode owners.') }
 
     DeployManager.config.contracts.ENSManager = ensManager.contractAddress;
     DeployManager.config.contracts.ENSResolver = ensResolver.contractAddress;
     DeployManager.config.contracts.ENSRegistry = ensRegistry.contractAddress;
     DeployManager.config.contracts.ensReverse = ensRegistry.ensReverse;
     updateConfigFile(DeployManager.network, DeployManager.config)
-    console.log('11 - Updated configuration files. DONE.')
+    console.log('10 - Updated configuration files. DONE.')
 }
 
 module.exports =  deployENS;

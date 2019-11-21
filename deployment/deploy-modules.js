@@ -1,5 +1,6 @@
 const fs = require('fs');
-const ethers = require('ethers')
+const ethers = require('ethers');
+const updateConfigFile = require('../utils/argent-utils/update-config');
 
 const ModuleRegistry = require("../build/ModuleRegistry");
 
@@ -15,162 +16,182 @@ const LockManager = require('../build/LockManager');
 const RecoveryManager = require('../build/RecoveryManager');
 const TokenTransfer = require('../build/TransferManager');
 const ApprovedTransfer = require('../build/ApprovedTransfer');
+const DappRegistry = require('../build/DappRegistry');
 const DappManager = require('../build/DappManager');
 
 const deployManager = require('../utils/argent-utils/deploy-manager');
-const config = require('../utils/argent-utils/config/ganacheConfig.json')
 
-const deployModules = async (network, secret) => {
+const deployModules = async (network) => {
 
     let DeployManager = deployManager(network);
+    let config = DeployManager.config;
 
     ////////////////////////////////////
     // Deploy Storage
     ////////////////////////////////////
-    console.log('Deploying storage...')
+    
     // Deploy the Guardian Storage
-    const GuardianStorageWrapper = await DeployManager.deploy(GuardianStorage);
+    const GuardianStorageWrapper = await DeployManager.deployer.deploy(GuardianStorage);
+    console.log('01 - Guardian Storage: ', GuardianStorageWrapper.contractAddress);
     // Deploy the Transfer Storage
-    const TransferStorageWrapper = await DeployManager.deploy(TransferStorage);
+    const TransferStorageWrapper = await DeployManager.deployer.deploy(TransferStorage);
+    console.log('02 - Transfer Storage: ', TransferStorageWrapper.contractAddress);
     // Deploy the Dapp Storage
-    const DappStorageWrapper = await DeployManager.deploy(DappStorage); 
-
+    const DappStorageWrapper = await DeployManager.deployer.deploy(DappStorage); 
+    console.log('03 - Dapp Storage: ', DappStorageWrapper.contractAddress);
+    
     ////////////////////////////////////
     // Deploy Modules
     ////////////////////////////////////
 
-    console.log('Deploying Modules...')
     // Deploy Module Registry.
-    const moduleRegistry = await DeployManager.deploy(ModuleRegistry);
+    const ModuleRegistryWrapper = await DeployManager.deployer.deploy(ModuleRegistry);
+    console.log('04 - Module Registry: ', ModuleRegistryWrapper.contractAddress);
     // Deploy Kyber contract to mock on ganache.
-    let kyber = await DeployManager.deploy(KyberNetwork);
+    let KyberNetworkWrapper
+    if (network === 'ganache') { KyberNetworkWrapper = await DeployManager.deployer.deploy(KyberNetwork) }
+    if (network === 'ropsten') { KyberNetworkWrapper = await DeployManager.deployer.wrapDeployedContract(KyberNetwork, config.Kyber.contract) }
+    console.log('05 - Kyber Contract: ', KyberNetworkWrapper.contractAddress);
     // Deploy price provider.
-    let priceProvider = await DeployManager.deploy(TokenPriceProvider, {}, kyber.contractAddress);
+    let TokenPriceProviderWrapper = await DeployManager.deployer.deploy(TokenPriceProvider, {}, KyberNetworkWrapper.contractAddress);
+    console.log('06 - Token Price Provider: ', TokenPriceProviderWrapper.contractAddress);
+    
 
     // Deploy the GuardianManager module
-    const GuardianManagerWrapper = await DeployManager.deploy(
+    const GuardianManagerWrapper = await DeployManager.deployer.deploy(
         GuardianManager,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
         config.settings.securityPeriod || 0,
         config.settings.securityWindow || 0);
+    console.log('07 - GuardianManagerWrapper: ', GuardianManagerWrapper.contractAddress);
     // Deploy the LockManager module
-    const LockManagerWrapper = await DeployManager.deploy(
+    const LockManagerWrapper = await DeployManager.deployer.deploy(
         LockManager,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
         config.settings.lockPeriod || 0);
+    console.log('08 - LockManagerWrapper: ', LockManagerWrapper.contractAddress);
     // Deploy the RecoveryManager module
-    const RecoveryManagerWrapper = await DeployManager.deploy(
+    const RecoveryManagerWrapper = await DeployManager.deployer.deploy(
         RecoveryManager,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
         config.settings.recoveryPeriod || 0,
         config.settings.lockPeriod || 0);
+    console.log('09 - RecoveryManagerWrapper: ', RecoveryManagerWrapper.contractAddress);
     // Deploy the ApprovedTransfer module
-    const ApprovedTransferWrapper = await DeployManager.deploy(
+    const ApprovedTransferWrapper = await DeployManager.deployer.deploy(
         ApprovedTransfer,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress);
+    console.log('10 - ApprovedTransferWrapper: ', ApprovedTransferWrapper.contractAddress);
     // Deploy previous TokenTransfer module
-    const PreviousTokenTransferWrapper = await DeployManager.deploy(
+    const PreviousTokenTransferWrapper = await DeployManager.deployer.deploy(
         PreviousTokenTransfer,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         TransferStorageWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
-        config.contracts.TokenPriceProvider,
+        TokenPriceProviderWrapper.contractAddress,
         config.settings.securityPeriod || 0,
         config.settings.securityWindow || 0,
         config.settings.defaultLimit || '1000000000000000000');
+    console.log('11 - PreviousTokenTransferWrapper: ', PreviousTokenTransferWrapper.contractAddress);
     // Deploy the TokenTransfer module
-    const TokenTransferWrapper = await DeployManager.deploy(
+    const TokenTransferWrapper = await DeployManager.deployer.deploy(
         TokenTransfer,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         TransferStorageWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
-        config.contracts.TokenPriceProvider,
+        TokenPriceProviderWrapper.contractAddress,
         config.settings.securityPeriod || 0,
         config.settings.securityWindow || 0,
         config.settings.defaultLimit || '1000000000000000000',
         PreviousTokenTransferWrapper.contractAddress);
+    console.log('12 - TokenTransferWrapper: ', TokenTransferWrapper.contractAddress);
+    // Deploy Dapp Registry
+    const DappRegistryWrapper = await DeployManager.deployer.deploy(DappRegistry)
+    console.log('13 - DappRegistryWrapper: ', DappRegistryWrapper.contractAddress);
     // Deploy the DappManager module
-    const DappManagerWrapper = await DeployManager.deploy(
+    const DappManagerWrapper = await DeployManager.deployer.deploy(
         DappManager,
         {},
-        moduleRegistry.contractAddress,
-        config.contracts.DappRegistry,
+        ModuleRegistryWrapper.contractAddress,
+        DappRegistryWrapper.contractAddress,
         DappStorageWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
         config.settings.securityPeriod || 0,
         config.settings.securityWindow || 0,
         config.settings.defaultLimit || '1000000000000000000');
+    console.log('14 - DappManagerWrapper: ', DappManagerWrapper.contractAddress);
     // Deploy the TokenExchanger module
-    const TokenExchangerWrapper = await DeployManager.deploy(
+    const TokenExchangerWrapper = await DeployManager.deployer.deploy(
         TokenExchanger,
         {},
-        moduleRegistry.contractAddress,
+        ModuleRegistryWrapper.contractAddress,
         GuardianStorageWrapper.contractAddress,
-        config.Kyber.contract,
+        KyberNetworkWrapper.contractAddress,
         config.contracts.MultiSigWallet,
         config.settings.feeRatio || 0);
-    
+    console.log('15 - TokenExchangerWrapper: ', TokenExchangerWrapper.contractAddress);
+
     ////////////////////////////////////
     // Register Modules
     ////////////////////////////////////
-    console.log('Registering Modules...')
-    var registerModuleTx = await moduleRegistry.registerModule(
+
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         GuardianManagerWrapper.contractAddress, 
         ethers.utils.formatBytes32String("GuardianManagerWrapper")
     );
     await registerModuleTx.wait()
     console.log('1')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         LockManagerWrapper.contractAddress, 
         ethers.utils.formatBytes32String("LockManager")
     );
     await registerModuleTx.wait()
     console.log('2')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         RecoveryManagerWrapper.contractAddress, 
         ethers.utils.formatBytes32String("RecoveryManager")
     );
     await registerModuleTx.wait()
     console.log('3')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         ApprovedTransferWrapper.contractAddress, 
         ethers.utils.formatBytes32String("ApprovedTransfer")
     );
     await registerModuleTx.wait()
     console.log('4')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         TokenTransferWrapper.contractAddress, 
         ethers.utils.formatBytes32String("TokenTransfer")
     );
     await registerModuleTx.wait()
     console.log('5')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         DappManagerWrapper.contractAddress, 
         ethers.utils.formatBytes32String("DappManager")
     );
     await registerModuleTx.wait()
     console.log('6')
-    var registerModuleTx = await moduleRegistry.registerModule(
+    var registerModuleTx = await ModuleRegistryWrapper.registerModule(
         TokenExchangerWrapper.contractAddress, 
         ethers.utils.formatBytes32String("TokenExchanger")
     );
     await registerModuleTx.wait()
     console.log('7')
+
     ///////////////////////////////////
     // Update config
     ////////////////////////////////////
-    console.log('Updating module addresses...')
-    // Update addresses.
+
     config.modules.GuardianStorage = GuardianManagerWrapper.contractAddress
     config.modules.TransferStorage = TransferStorageWrapper.contractAddress
     config.modules.DappStorage = DappStorageWrapper.contractAddress
@@ -181,10 +202,12 @@ const deployModules = async (network, secret) => {
     config.modules.TokenTransfer = TokenTransferWrapper.contractAddress
     config.modules.DappManager = DappManagerWrapper.contractAddress
     config.modules.TokenExchanger = TokenExchangerWrapper.contractAddress
-    config.contracts.ModuleRegistry = moduleRegistry.contractAddress
+    config.contracts.DappRegistry = DappRegistryWrapper.contractAddress
+    config.contracts.ModuleRegistry = ModuleRegistryWrapper.contractAddress
+
     // Save changes.
-    let updatedConfig = JSON.stringify(config)
-    fs.writeFileSync('./utils/argent-utils/config/ganacheConfig.json', updatedConfig)
+    updateConfigFile(DeployManager.network, config)
+    console.log('DONE.')
 };
 
 module.exports = deployModules;

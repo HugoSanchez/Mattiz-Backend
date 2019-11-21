@@ -5,7 +5,9 @@ const ethers = require('ethers');
 
 const deployENS = require('./deployment/deploy-ens')
 const deployManager = require('./utils/argent-utils/deploy-manager');
-const DeployManager = deployManager('ganache');
+const DeployManager = deployManager('ropsten');
+const deployModules = require('./deployment/deploy-modules');
+
 
 /** 
 const TokenTransfer = require('./build/TransferManager');
@@ -13,7 +15,6 @@ const TestContract = require('./build/TestContract');
 
 const deployFactory = require('./deployment/deploy-factory');
 const deployWallet = require('./deployment/deploy-wallet');
-const deployModules = require('./deployment/deploy-modules');
 
 const url = "http://localhost:8545";
 const privateKey = '0x2030b463177db2da82908ef90fa55ddfcef56e8183caf60db464bc398e736e6f';
@@ -74,7 +75,7 @@ let x = async () => {
 // main()
 // testWallet()
 
-deployENS(DeployManager)
+deployModules('ropsten')
 
 
 // x()

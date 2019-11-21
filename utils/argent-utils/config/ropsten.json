@@ -20,8 +20,8 @@
     "defaultLimit": "1000000000000000000"
   },
   "Kyber": {
-    "deployOwn": true,
-    "contract": "0x0116090EfeC8A6c176A094d3094c58811a7eA39c"
+    "deployOwn": false,
+    "contract": "0x753fe1914db38ee744e071baadd123f50f9c8e46"
   },
   "CryptoKitties": { "contract": "0x0000000000000000000000000000000000000000" },
   "defi": {
@@ -47,9 +47,9 @@
     "BaseWallet": "0xEE43f3f33d2972441251887FbB7C64D2fD55677f"
   },
   "modules": {
-    "GuardianStorage": "0xEE43f3f33d2972441251887FbB7C64D2fD55677f",
-    "TransferStorage": "0x9eD274314f0fB37837346C425D3cF28d89ca9599",
-    "DappStorage": "0x655341AabD39a5ee0939796dF610aD685a984C53",
+    "GuardianStorage": "0x6FBE744FF57c86fB3A8136d6340cbfbd5650133a",
+    "TransferStorage": "0xF769B56Deee3e628aeF6a4085ff1476f67cA09c0",
+    "DappStorage": "0xB0cc28F818b0bAA9e1911e04Fcdc14956A172F36",
     "GuardianManager": "0xEE43f3f33d2972441251887FbB7C64D2fD55677f",
     "LockManager": "0xa00f6A3a3D00979D7B7E23D7C7dF6CC7E255Ad88",
     "RecoveryManager": "0x357faed9d8d2fe67cEc3732532F14E9958D8f381",
