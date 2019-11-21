@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fs = require('fs');
 const ethers = require('ethers')
 
@@ -7,12 +6,14 @@ const ModuleRegistry = require("../build/ModuleRegistry");
 const GuardianStorage = require('../build/GuardianStorage');
 const TransferStorage = require('../build/TransferStorage');
 const DappStorage = require('../build/DappStorage');
-
+const KyberNetwork = require("../build/KyberNetworkTest");
+const TokenPriceProvider = require("../build/TokenPriceProvider");
+const PreviousTokenTransfer = require("../build/TokenTransfer");
 const GuardianManager = require('../build/GuardianManager');
 const TokenExchanger = require('../build/TokenExchanger');
 const LockManager = require('../build/LockManager');
 const RecoveryManager = require('../build/RecoveryManager');
-const TokenTransfer = require('../build/TokenTransfer');
+const TokenTransfer = require('../build/TransferManager');
 const ApprovedTransfer = require('../build/ApprovedTransfer');
 const DappManager = require('../build/DappManager');
 
@@ -37,9 +38,14 @@ const deployModules = async (network, secret) => {
     ////////////////////////////////////
     // Deploy Modules
     ////////////////////////////////////
+
     console.log('Deploying Modules...')
     // Deploy Module Registry.
     const moduleRegistry = await DeployManager.deploy(ModuleRegistry);
+    // Deploy Kyber contract to mock on ganache.
+    let kyber = await DeployManager.deploy(KyberNetwork);
+    // Deploy price provider.
+    let priceProvider = await DeployManager.deploy(TokenPriceProvider, {}, kyber.contractAddress);
 
     // Deploy the GuardianManager module
     const GuardianManagerWrapper = await DeployManager.deploy(
@@ -70,6 +76,17 @@ const deployModules = async (network, secret) => {
         {},
         moduleRegistry.contractAddress,
         GuardianStorageWrapper.contractAddress);
+    // Deploy previous TokenTransfer module
+    const PreviousTokenTransferWrapper = await DeployManager.deploy(
+        PreviousTokenTransfer,
+        {},
+        moduleRegistry.contractAddress,
+        TransferStorageWrapper.contractAddress,
+        GuardianStorageWrapper.contractAddress,
+        config.contracts.TokenPriceProvider,
+        config.settings.securityPeriod || 0,
+        config.settings.securityWindow || 0,
+        config.settings.defaultLimit || '1000000000000000000');
     // Deploy the TokenTransfer module
     const TokenTransferWrapper = await DeployManager.deploy(
         TokenTransfer,
@@ -80,7 +97,8 @@ const deployModules = async (network, secret) => {
         config.contracts.TokenPriceProvider,
         config.settings.securityPeriod || 0,
         config.settings.securityWindow || 0,
-        config.settings.defaultLimit || '1000000000000000000');
+        config.settings.defaultLimit || '1000000000000000000',
+        PreviousTokenTransferWrapper.contractAddress);
     // Deploy the DappManager module
     const DappManagerWrapper = await DeployManager.deploy(
         DappManager,

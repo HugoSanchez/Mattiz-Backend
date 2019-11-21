@@ -1,5 +1,4 @@
 require('dotenv').config();
-const ethers = require('ethers');
 
 const WalletFactory = require('../build/WalletFactory');
 
