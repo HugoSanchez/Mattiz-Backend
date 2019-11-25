@@ -9,15 +9,30 @@ const config = require('./config')
 app.use(session({
     name: 'id',
     resave: false,
+    // rolling: false,
     saveUninitialized: true,
     secret: config.sessionSecret,
     store: new MongoStore({ mongooseConnection: db }),
     cookie: {
         httpOnly: true,
+        maxAge: 60 * 1000, // 1 min
         // secure: true, SHOULD IMPLEMENT AS SOON AS WHOLE APP IS OVER HTTPS
     },
   })
 )
+
+app.use((req, res, next) => {
+  // console.log(`if (${ req.session.cookie.maxAge < 0 })`)
+  // console.log(`ID: (${ req.session.id})`)
+  // debugger
+  if (req.session.cookie.maxAge < 0) {
+    
+    
+    return res.status(401).send("Session expired")
+  }
+  
+  next()
+})
 
 /* Import UserController routes */
 const UserController = require('./src/user/UserController');
