@@ -193,7 +193,7 @@ const deployModules = async (network) => {
     // Update config
     ////////////////////////////////////
 
-    config.modules.GuardianStorage = GuardianManagerWrapper.contractAddress
+    config.modules.GuardianStorage = GuardianStorageWrapper.contractAddress
     config.modules.TransferStorage = TransferStorageWrapper.contractAddress
     config.modules.DappStorage = DappStorageWrapper.contractAddress
     config.modules.GuardianManager = GuardianManagerWrapper.contractAddress
@@ -203,8 +203,11 @@ const deployModules = async (network) => {
     config.modules.TokenTransfer = TokenTransferWrapper.contractAddress
     config.modules.DappManager = DappManagerWrapper.contractAddress
     config.modules.TokenExchanger = TokenExchangerWrapper.contractAddress
+    config.modules.TokenPriceProvider = TokenPriceProviderWrapper.contractAddress
+    config.modules.PreviousTokenTransfer = PreviousTokenTransferWrapper.contractAddress
     config.contracts.DappRegistry = DappRegistryWrapper.contractAddress
     config.contracts.ModuleRegistry = ModuleRegistryWrapper.contractAddress
+    
 
     // Save changes.
     updateConfigFile(network, config)

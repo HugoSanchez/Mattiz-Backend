@@ -1,1 +1,64 @@
-{"ENS":{"deployOwnRegistry":true,"ensRegistry":"0x112234455c3a32fd11230c42e7bccd4a84e02010","domain":"bradbvry.eth"},"backend":{"accounts":["0xD9995BAE12FEe327256FFec1e3184d492bD94C31"]},"multisig":{"owners":["0xD9995BAE12FEe327256FFec1e3184d492bD94C31"],"threshold":1,"autosign":true},"settings":{"deployer":{"type":"ropsten"},"lockPeriod":480,"recoveryPeriod":480,"securityPeriod":240,"securityWindow":240,"feeRatio":15,"defaultLimit":"1000000000000000000"},"Kyber":{"deployOwn":false,"contract":"0x753fe1914db38ee744e071baadd123f50f9c8e46"},"CryptoKitties":{"contract":"0x0000000000000000000000000000000000000000"},"defi":{"maker":{"tub":"0x0000000000000000000000000000000000000000"},"uniswap":{"factory":"0x0000000000000000000000000000000000000000"},"compound":{"comptroller":"0x0000000000000000000000000000000000000000","markets":{"0x0000000000000000000000000000000000000000":"0x0000000000000000000000000000000000000000"}}},"contracts":{"MultiSigWallet":"0xa00f6A3a3D00979D7B7E23D7C7dF6CC7E255Ad88","WalletFactory":"0xf676C110949d29F8bF5f263D28013D330aa74Ce6","ENSResolver":"0x6dBc7D9Daff55d05eb2b9cA036b2cc25279f6b31","ENSManager":"0x01782Df6C7b8b3603e426C8fe38885a51aB00737","ENSRegistry":"0x112234455c3a32fd11230c42e7bccd4a84e02010","ENSReverse":"0x94672AFd85e3ed104Bb7E11dBd4231911C8540CC","TokenPriceProvider":"0xEE37589c34841B8C04CefaA35Dce5c3792a4B9a9","ModuleRegistry":"0x45c14275d909c9442adBf57D26DC1B1cd27db2D5","DappRegistry":"0xD23Dc5fEE094850C45A5aEB2504d5456C74F6508","BaseWallet":"0xEE43f3f33d2972441251887FbB7C64D2fD55677f"},"modules":{"GuardianStorage":"0x3BCdc0C84333d546067D31F9Ba3048C3abbB1d5f","TransferStorage":"0x41bbA116B8B0386e9b1B538cB95247971ecc28c3","DappStorage":"0xdeB81769A8d9e20D2539955431cce6755f462Ea3","GuardianManager":"0xDc84F637EDaBF2Bf5CDB6Ed8504e838F66bfA1dF","LockManager":"0x67e4f862a7150B5Af25A85aEDcC1C59cdcc0c4c9","RecoveryManager":"0x06A15a2DdFb049A35B5113345A0235907D153c92","ApprovedTransfer":"0xD6189A4aB40dfeAeB3bBa8c1f1edEc5BaD1455D0","TokenTransfer":"0x39503C2e99773896Bc3526e3FC9E0ab16DDB4B66","PreviousTokenTransfer":"0xA3fdfE6D06B57b7c3DC8f0DccE42DD70ee70B734","DappManager":"0x9Eb01A68C84fC1693158811aeD19ce17733A197F","TokenExchanger":"0x67044E3c8D2E1658419e4E177B4D3F64d442D6B1","NftTransfer":"0x3266A7500b12141c26BF1bbe18344bD700C19C39"},"gitCommit":"0777d534e892241ed2d2804088de242b94dcaca9"}
+{
+  "ENS": {
+    "deployOwnRegistry": true,
+    "ensRegistry": "0x112234455c3a32fd11230c42e7bccd4a84e02010",
+    "domain": "bradbvry.eth"
+  },
+  "backend": { "accounts": ["0xD9995BAE12FEe327256FFec1e3184d492bD94C31"] },
+  "multisig": {
+    "owners": ["0xD9995BAE12FEe327256FFec1e3184d492bD94C31"],
+    "threshold": 1,
+    "autosign": true
+  },
+  "settings": {
+    "deployer": { "type": "ropsten" },
+    "lockPeriod": 480,
+    "recoveryPeriod": 480,
+    "securityPeriod": 240,
+    "securityWindow": 240,
+    "feeRatio": 15,
+    "defaultLimit": "1000000000000000000"
+  },
+  "Kyber": {
+    "deployOwn": false,
+    "contract": "0x753fe1914db38ee744e071baadd123f50f9c8e46"
+  },
+  "CryptoKitties": { "contract": "0x0000000000000000000000000000000000000000" },
+  "defi": {
+    "maker": { "tub": "0x0000000000000000000000000000000000000000" },
+    "uniswap": { "factory": "0x0000000000000000000000000000000000000000" },
+    "compound": {
+      "comptroller": "0x0000000000000000000000000000000000000000",
+      "markets": {
+        "0x0000000000000000000000000000000000000000": "0x0000000000000000000000000000000000000000"
+      }
+    }
+  },
+  "contracts": {
+    "MultiSigWallet": "0xa00f6A3a3D00979D7B7E23D7C7dF6CC7E255Ad88",
+    "WalletFactory": "0xf676C110949d29F8bF5f263D28013D330aa74Ce6",
+    "ENSResolver": "0x6dBc7D9Daff55d05eb2b9cA036b2cc25279f6b31",
+    "ENSManager": "0x01782Df6C7b8b3603e426C8fe38885a51aB00737",
+    "ENSRegistry": "0x112234455c3a32fd11230c42e7bccd4a84e02010",
+    "ENSReverse": "0x94672AFd85e3ed104Bb7E11dBd4231911C8540CC",
+    "TokenPriceProvider": "0xEE37589c34841B8C04CefaA35Dce5c3792a4B9a9",
+    "ModuleRegistry": "0x45c14275d909c9442adBf57D26DC1B1cd27db2D5",
+    "DappRegistry": "0xD23Dc5fEE094850C45A5aEB2504d5456C74F6508",
+    "BaseWallet": "0xEE43f3f33d2972441251887FbB7C64D2fD55677f"
+  },
+  "modules": {
+    "GuardianStorage": "0x3BCdc0C84333d546067D31F9Ba3048C3abbB1d5f",
+    "TransferStorage": "0x41bbA116B8B0386e9b1B538cB95247971ecc28c3",
+    "DappStorage": "0xdeB81769A8d9e20D2539955431cce6755f462Ea3",
+    "GuardianManager": "0xDc84F637EDaBF2Bf5CDB6Ed8504e838F66bfA1dF",
+    "LockManager": "0x67e4f862a7150B5Af25A85aEDcC1C59cdcc0c4c9",
+    "RecoveryManager": "0x06A15a2DdFb049A35B5113345A0235907D153c92",
+    "ApprovedTransfer": "0xD6189A4aB40dfeAeB3bBa8c1f1edEc5BaD1455D0",
+    "TokenTransfer": "0x39503C2e99773896Bc3526e3FC9E0ab16DDB4B66",
+    "PreviousTokenTransfer": "0xA3fdfE6D06B57b7c3DC8f0DccE42DD70ee70B734",
+    "DappManager": "0x9Eb01A68C84fC1693158811aeD19ce17733A197F",
+    "TokenExchanger": "0x67044E3c8D2E1658419e4E177B4D3F64d442D6B1",
+    "NftTransfer": "0x3266A7500b12141c26BF1bbe18344bD700C19C39"
+  },
+  "gitCommit": "0777d534e892241ed2d2804088de242b94dcaca9"
+}

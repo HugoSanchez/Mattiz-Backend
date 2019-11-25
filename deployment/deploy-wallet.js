@@ -1,18 +1,17 @@
-require('dotenv').config();
-
 const WalletFactory = require('../build/WalletFactory');
-
 const deployManager = require('../utils/argent-utils/deploy-manager');
 
-const config = require('../utils/argent-utils/config/ganacheConfig.json')
-
-const instantiateWallet = require('../utils/argent-utils/system-wallet');
-const sysWallet = instantiateWallet()
-
-const deployWallet = async network => {
-    console.log('SysWallet: ', sysWallet.address)
+const deployWallet = async (network) => {
+    // Initiate Deployment Manager.
     let DeployManager = deployManager(network);
-
+    // Deconstruct config.
+    let config = DeployManager.config;
+    // Deconstruct deployer wallet.
+    let wallet = DeployManager.wallet;
+    // Randome name.
+    let walletName = ''
+    console.log('Name: ', walletName)
+    // Array of module addresses.
     let modules = [
         config.modules.GuardianManager,
         config.modules.LockManager,
@@ -22,19 +21,27 @@ const deployWallet = async network => {
         config.modules.DappManager,
         config.modules.TokenExchanger
     ];
-
-    // Deploy Wallet script HERE.
+    // Wrap Factory contract.
+    const walletFactoryWrapper = await DeployManager.deployer.wrapDeployedContract(
+        WalletFactory, 
+        config.contracts.WalletFactory);
     console.log('1')
-    const walletFactoryWrapper = 
-        await DeployManager.wrapDeployedContract(WalletFactory, config.contracts.WalletFactory);
+    // Create Wallet tx.
+    walletFactoryWrapper.createWallet(
+        wallet.address, modules, walletName,
+        {gasLimit: 1000000})
+        .then(async tx => {
+             // Wait for tx to be mined.
+            await tx.wait()
+            const txReceipt = await walletFactoryWrapper.verboseWaitForTransaction(tx);
+            console.log('3')
+            // Fish New Wallet Address
+            const walletAddress = txReceipt.events.find(log => log.event === "WalletCreated").args["_wallet"];
+            console.log('New wallet has been created at address: ', walletAddress)
+        })
+        .catch(err => console.log('Error: ', err))
     console.log('2')
-    const tx = 
-        await walletFactoryWrapper.from(sysWallet).createWallet(sysWallet.address, modules, 'john')
-    console.log('3')
-    const txReceipt = 
-        await walletFactoryWrapper.verboseWaitForTransaction(tx);
-    const walletAddress = txReceipt.events.find(log => log.event === "WalletCreated").args["_wallet"];
-    console.log('Wallet Address: ', walletAddress)
+   
 }
 
 module.exports = deployWallet;

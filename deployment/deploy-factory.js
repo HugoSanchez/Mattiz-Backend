@@ -21,6 +21,8 @@ const deployFactory = async (network) => {
         baseWallet.contractAddress,
         config.contracts.ENSManager,
         config.contracts.ENSResolver);
+
+    console.log('Wallet Factory: ', factory.contractAddress)
     // Add factory manager.
     await factory.addManager(systemWallet.address);
     // Add Factory as ENS Manager.
