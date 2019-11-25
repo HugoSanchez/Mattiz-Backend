@@ -44,7 +44,7 @@ router.post('/register', (req, res) => {
 router.post('/identify', (req, res) => {
     // Get token from request header.
     let token = req.body.token;
-    if (!token) return res.status(401).send({ auth: false, message: 
+    if (!token) return res.status(200).send({ auth: false, message: 
         'No token provided.' });
 
     // Retrieve id from token.
@@ -59,7 +59,7 @@ router.post('/identify', (req, res) => {
             if (!user) return res.status(404).send('No user found');
 
             // Send response with new object.
-            res.status(200).send(user)
+            res.status(200).send({ auth: true, user: user })
         });
     });
 });

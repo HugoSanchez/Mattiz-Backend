@@ -9,7 +9,7 @@ const config = require('./config')
 app.use(session({
     name: 'id',
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: true,
     secret: config.sessionSecret,
     store: new MongoStore({ mongooseConnection: db }),
     cookie: {
