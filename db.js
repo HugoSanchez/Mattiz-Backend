@@ -1,9 +1,10 @@
-var mongoose = require('mongoose');
-var config = require('./config')
+const mongoose = require('mongoose');
+const config = require('./config')
 
-mongoose.connect(config.dbUrl);
 
-mongoose.connection.on("open", function(ref) {
+mongoose.connect(config.sessionConn);
+
+module.exports = mongoose.connection.on("open", function(ref) {
     console.log("\n Connected to mongo server.");
 });
   

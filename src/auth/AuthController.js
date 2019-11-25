@@ -20,6 +20,7 @@ router.use(bodyParser.json());
 
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
+    debugger
     console.log(req.body)
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);

@@ -1,6 +1,23 @@
 const express = require('express');
 const app = express();
 const db = require('./db');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
+const config = require('./config')
+
+/* Setup session middleware */
+app.use(session({
+    name: 'id',
+    resave: false,
+    saveUninitialized: false,
+    secret: config.sessionSecret,
+    store: new MongoStore({ mongooseConnection: db }),
+    cookie: {
+        httpOnly: true,
+        // secure: true, SHOULD IMPLEMENT AS SOON AS WHOLE APP IS OVER HTTPS
+    },
+  })
+)
 
 /* Import UserController routes */
 const UserController = require('./src/user/UserController');
