@@ -13,14 +13,16 @@ require('dotenv').config()
 // USER SCHEMA
 const User = require('../user/User');
 
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
+// // ROUTER ENCODING ATRIBUTES 
+// router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.json());
 
+///* Auth Routes *///
 
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
-    console.log(req.body)
+    console.log("User registered")
+    debugger
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);
 
@@ -89,3 +91,6 @@ router.post('/login', (req, res) => {
 
 // Export router 
 module.exports = router; 
+
+// clean simulator cache
+// xcrun simctl erase all

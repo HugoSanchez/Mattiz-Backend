@@ -12,15 +12,17 @@ const axios = require('axios');
 require('dotenv').config()
 
 
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
+// // ROUTER ENCODING ATRIBUTES 
+// router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.json());
 
 ///* Data Routes *///
 
 
 // POST: GET ETH HISTORICAL DATA.
 router.post('/get_historical_data', function(req, res) {
+    console.log(req.body)
+    console.log('\n\n HIIIIIIIIIIT \n\n')
     // Get the currency from the body.
     const currency = req.body.currency;
     // Get current time up to minutes.

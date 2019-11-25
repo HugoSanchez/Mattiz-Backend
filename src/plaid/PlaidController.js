@@ -12,9 +12,9 @@ const plaid = require('plaid');
 // LOAD ENVIRONMENT VARIABLES
 require('dotenv').config()
 
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
+// // ROUTER ENCODING ATRIBUTES 
+// router.use(bodyParser.urlencoded({ extended: false }));
+// router.use(bodyParser.json());
 
 // PLAID CONFIG
 const client_id = process.env.PLAID_CLIENT_ID;
