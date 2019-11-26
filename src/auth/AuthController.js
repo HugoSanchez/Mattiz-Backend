@@ -27,17 +27,25 @@ router.post('/register', async (req, res) => {
     let wallet = ethers.Wallet.createRandom()
     // Then deploy smart contract wallet owned by previous wallet.
     let smartContractWalletAddress = await deployWallet('ropsten', wallet.address)
-    // 
-
     // Create a new User instance and save it in DB.
-    User.create({ name: req.body.name, password: hashedPaswword },
-        (err, user) => {
-            // If error return error.
-            if (err) return res.status(500).send('There was a problem registering the user.')
-            // If successful, create token,
-            let token = jwt.sign({id: user._id }, process.env.SECRET)
-            // And send details back.
-            res.status(200).send({ auth: true, token: token, user: user, ethKey: wallet.privateKey, smartContractWalletAddress}); 
+    User.create({ 
+        name: req.body.name, 
+        password: hashedPaswword,
+        ethAddress: wallet.address,
+        smartWalletAddres: smartContractWalletAddress,
+    }, (err, user) => {
+        // If error return error.
+        if (err) return res.status(500).send('There was a problem registering the user.')
+        // If successful, create token,
+        let token = jwt.sign({id: user._id }, process.env.SECRET)
+        // And send details back.
+        res.status(200).send({ 
+            auth: true, 
+            token: token, 
+            user: user, 
+            ethKey: wallet.privateKey, 
+            smartContractWalletAddress
+        }); 
     });
 });
 
