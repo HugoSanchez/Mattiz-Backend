@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const helper = require('./../../helper')
 
-router.get('/', (req, res) => {
+router.get('', (req, res) => {
+  console.log("Request SC")
   const { publicKey, privateKey, prime, generator } = helper.establishDH(process.env.BIT_SIZE)
 
   req.session.prime = prime
@@ -16,7 +17,7 @@ router.get('/', (req, res) => {
   })
 })
 
-router.post('/', (req, res) => {
+router.post('', (req, res) => {
   console.log("Establish SC")
 
   if (req.body.cKey) {
