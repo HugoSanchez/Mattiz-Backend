@@ -39,13 +39,7 @@ router.post('/register', async (req, res) => {
         // If successful, create token,
         let token = jwt.sign({id: user._id }, process.env.SECRET)
         // And send details back.
-        res.status(200).send({ 
-            auth: true, 
-            token: token, 
-            user: user, 
-            ethKey: wallet.privateKey, 
-            smartContractWalletAddress
-        }); 
+        res.status(200).send({ auth: true, token, user }); 
     });
 });
 
