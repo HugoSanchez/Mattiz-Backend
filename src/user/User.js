@@ -4,7 +4,7 @@ var UserSchema = new mongoose.Schema({
   email: String,
   password: String, 
   ethAddress: String, 
-  smartWalletAddres: String
+  smartWalletAddress: String
 });
 
 mongoose.model('User', UserSchema);
