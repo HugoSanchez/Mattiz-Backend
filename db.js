@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
-const config = require('./config')
 
-
-mongoose.connect(config.sessionConn);
+mongoose.connect(process.env.DB_URL);
 
 module.exports = mongoose.connection.on("open", function(ref) {
     console.log("\n Connected to mongo server.");

@@ -35,7 +35,7 @@ const generateDecipher = (password, ivString) => {
 
 const encryptData = (data, password) => {
   const plainText = JSON.stringify(data)
-  const cipher = generateCipher(password, "IVString")
+  const cipher = generateCipher(password, "IdeallyCryptographicallyRandom")
 
   let encrypted = cipher.update(plainText, 'binary', 'hex')
   encrypted += cipher.final('hex')
@@ -44,7 +44,7 @@ const encryptData = (data, password) => {
 }
 
 const decryptData = (cipherText, password) => {
-  const decipher = generateDecipher(password, "IVString")
+  const decipher = generateDecipher(password.toString('hex'), "IdeallyCryptographicallyRandom")
 
   let decrypted = decipher.update(cipherText, 'hex', 'binary')
   decrypted += decipher.final('binary')
@@ -71,7 +71,8 @@ const establishDH = (size) => {
 
 
   return {
-    key,
+    publicKey: key,
+    privateKey: dH.getPrivateKey(),
     // key: dH.getPublicKey(),
     prime,
     // prime: dH.getPrime(),
@@ -81,6 +82,20 @@ const establishDH = (size) => {
   }
 }
 
+const calculateSecret = (clientKey, serverPrivateKey, prime, generator) => {
+  const cKeyBuffer = Buffer.from(clientKey.data)
+  const privateKeyBuffer = Buffer.from(serverPrivateKey.data)
+  const primeBuffer = Buffer.from(prime.data)
+  const generatorBuffer = Buffer.from(generator.data)
+
+  const dH = crypto.createDiffieHellman(primeBuffer, generatorBuffer)
+
+  dH.setPrivateKey(privateKeyBuffer)
+  const secret = dH.computeSecret(cKeyBuffer)
+
+  return secret
+}
+
 ////////////////////////////////////////////////////////////////
 
 
@@ -88,4 +103,5 @@ module.exports = {
   encryptData,
   decryptData,
   establishDH,
+  calculateSecret,
 }

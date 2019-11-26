@@ -21,8 +21,6 @@ require('dotenv').config()
 
 // POST: GET ETH HISTORICAL DATA.
 router.post('/get_historical_data', function(req, res) {
-    console.log(req.body)
-    console.log('\n\n HIIIIIIIIIIT \n\n')
     // Get the currency from the body.
     const currency = req.body.currency;
     // Get current time up to minutes.
@@ -31,6 +29,7 @@ router.post('/get_historical_data', function(req, res) {
     // Then subtract based on timeframe.
     const startTime = start(req.body.timeframe)
     
+    debugger
     // Call Nomics API.
     axios.get('https://api.nomics.com/v1/exchange-rates/history?key=' 
     + process.env.NOMICS_KEY + '&currency=' + currency

@@ -22,7 +22,6 @@ const User = require('../user/User');
 // POST: CREATE NEW USER
 router.post('/register', (req, res) => {
     console.log("User registered")
-    debugger
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);
 
@@ -44,7 +43,6 @@ router.post('/register', (req, res) => {
 // GET: SPECIFIC USER DETAILS FROM DB
 router.post('/identify', (req, res) => {
     // Get token from request header.
-    debugger
     let token = req.body.token;
     if (!token) return res.status(200).send({ auth: false, message: 
         'No token provided.' });
