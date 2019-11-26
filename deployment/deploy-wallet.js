@@ -1,16 +1,13 @@
 const WalletFactory = require('../build/WalletFactory');
 const deployManager = require('../utils/argent-utils/deploy-manager');
 
-const deployWallet = async (network) => {
+const deployWallet = async (network, ownerAddress) => {
     // Initiate Deployment Manager.
     let DeployManager = deployManager(network);
     // Deconstruct config.
     let config = DeployManager.config;
-    // Deconstruct deployer wallet.
-    let wallet = DeployManager.wallet;
     // Randome name.
     let walletName = ''
-    console.log('Name: ', walletName)
     // Array of module addresses.
     let modules = [
         config.modules.GuardianManager,
@@ -25,23 +22,15 @@ const deployWallet = async (network) => {
     const walletFactoryWrapper = await DeployManager.deployer.wrapDeployedContract(
         WalletFactory, 
         config.contracts.WalletFactory);
-    console.log('1')
     // Create Wallet tx.
-    walletFactoryWrapper.createWallet(
-        wallet.address, modules, walletName,
-        {gasLimit: 1000000})
-        .then(async tx => {
-             // Wait for tx to be mined.
-            await tx.wait()
-            const txReceipt = await walletFactoryWrapper.verboseWaitForTransaction(tx);
-            console.log('3')
-            // Fish New Wallet Address
-            const walletAddress = txReceipt.events.find(log => log.event === "WalletCreated").args["_wallet"];
-            console.log('New wallet has been created at address: ', walletAddress)
-        })
-        .catch(err => console.log('Error: ', err))
-    console.log('2')
-   
+    let tx = await walletFactoryWrapper.createWallet(
+        ownerAddress, modules, walletName, {gasLimit: 1000000})
+    // Wait for tx to be mined.
+    const txReceipt = await walletFactoryWrapper.verboseWaitForTransaction(tx);
+    // Fish New Wallet Address
+    const walletAddress = txReceipt.events.find(log => log.event === "WalletCreated").args["_wallet"];
+    console.log('New wallet has been created at address: ', walletAddress)
+    return walletAddress
 }
 
 module.exports = deployWallet;

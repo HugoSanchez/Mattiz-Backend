@@ -1,4 +1,6 @@
-// SERVER SIDE DEPENDENCIES
+require('dotenv').config()
+
+// SERVER-SIDE DEPENDENCIES
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
@@ -8,11 +10,9 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const ethers = require('ethers');
 
-// LOAD ENVIRONMENT VARIABLES
-require('dotenv').config()
-
 // USER SCHEMA
 const User = require('../user/User');
+const deployWallet = require('../../deployment/deploy-wallet');
 
 // ROUTER ENCODING ATRIBUTES 
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -20,23 +20,24 @@ router.use(bodyParser.json());
 
 
 // POST: CREATE NEW USER
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
     // Inmediately hash the password. 
     let hashedPaswword = bcrypt.hashSync(req.body.password, 8);
+    // Create a new wallet.
+    let wallet = ethers.Wallet.createRandom()
+    // Then deploy smart contract wallet owned by previous wallet.
+    let smartContractWalletAddress = await deployWallet('ropsten', wallet.address)
+    // 
 
     // Create a new User instance and save it in DB.
-    User.create({
-        name: req.body.name, 
-        password: hashedPaswword
-    },
-    (err, user) => {
-        // If error return error.
-        if (err) return res.status(500).send('There was a problem registering the user.')
-
-        // If succesful, create token and return 200.
-        let wallet = ethers.Wallet.createRandom()
-        let token = jwt.sign({id: user._id }, process.env.SECRET)
-        res.status(200).send({ auth: true, token: token, user: user, ethKey: wallet.privateKey }); 
+    User.create({ name: req.body.name, password: hashedPaswword },
+        (err, user) => {
+            // If error return error.
+            if (err) return res.status(500).send('There was a problem registering the user.')
+            // If successful, create token,
+            let token = jwt.sign({id: user._id }, process.env.SECRET)
+            // And send details back.
+            res.status(200).send({ auth: true, token: token, user: user, ethKey: wallet.privateKey, smartContractWalletAddress}); 
     });
 });
 
