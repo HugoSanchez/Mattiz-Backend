@@ -37,7 +37,7 @@ router.post('/get_historical_data', function(req, res) {
     + '&end=' + dayAndHour + '%3A' + minutes + '%3A00Z')
         // Then send status 200 with rates array.
         .then( async response => {
-            res.status(200).send({ 
+            res.status(200).sendEnc({ 
                 error: false, 
                 rates: response.data.map(d =>  parseFloat(d.rate).toFixed(2))
             })

@@ -30,6 +30,8 @@ app.use(session({
 app.use((req, res, next) => {
   if (req.session.cookie.maxAge < 0) return res.status(401).send("Session expired")
 
+  if (req.session.secret) res.sendEnc = (body) => res.send( helper.encryptData(body, Buffer.from(req.session.secret.data)) )
+
   next()
 })
 
