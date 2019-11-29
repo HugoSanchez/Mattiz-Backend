@@ -55,7 +55,7 @@ const encryptData = (data, password) => {
 
   // console.log("encryptData()...")
   const plainText = JSON.stringify(data)
-  const cipher = generateCipher(password, "IdeallyCryptographicallyRandom")
+  const cipher = generateCipher(password.toString('hex'), "IdeallyCryptographicallyRandom")
 
   let encrypted = cipher.update(plainText, 'binary', 'hex')
   encrypted += cipher.final('hex')

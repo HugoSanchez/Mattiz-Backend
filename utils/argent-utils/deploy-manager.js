@@ -2,7 +2,7 @@ require('dotenv').config();
 const etherlime = require('etherlime-lib');
 const ethers = require('ethers');
 
-const ganacheConfig = require('./config/ganacheConfig.json')
+const ganacheConfig = require('./config/ganache.json')
 const ropstenConfig = require('./config/ropsten.json')
 
 const defaultConfigs = { gasPrice: 20000000000, gasLimit: 6000000 }

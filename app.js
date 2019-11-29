@@ -5,7 +5,7 @@ const app = express();
 const db = require('./db');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const helper = require('./helper')
+const helper = require('./utils/crypto-utils/helper')
 const bodyParser = require('body-parser');
 
 /* Setup session middleware */

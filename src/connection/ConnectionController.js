@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { generateDH, calculateSecret } = require('./../../helper')
+const { generateDH, calculateSecret } = require('../../utils/crypto-utils/helper')
 
 router.get('', (req, res) => {
   console.log("SC Requested!")

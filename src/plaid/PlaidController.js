@@ -1,20 +1,12 @@
 
-
-///* Dependencies & Set Up */// 
-
 // SERVER SIDE DEPENDENCIES
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
 const moment = require('moment');
 const plaid = require('plaid');
 
 // LOAD ENVIRONMENT VARIABLES
 require('dotenv').config()
-
-// // ROUTER ENCODING ATRIBUTES 
-// router.use(bodyParser.urlencoded({ extended: false }));
-// router.use(bodyParser.json());
 
 // PLAID CONFIG
 const client_id = process.env.PLAID_CLIENT_ID;
@@ -33,8 +25,9 @@ const plaidClient = new plaid.Client (
 );
 
 
-
-///* Plaid Routes *///
+////////////////////////////////////
+// Routes
+///////////////////////////////////
 
 
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
@@ -47,7 +40,7 @@ router.post('/get_access_token', function(req, res) {
     // Then call Plaid method to exchange token.
     plaidClient.exchangePublicToken(req.body.public_token, function(error, token) {
         // If error, return error message. 
-        if ( error ) return res.status(401).sendEnc({ error: true, message: 
+        if ( error ) return res.status(401).send({ error: true, message: 
         JSON.stringify(error) });
         
         // If not, send access_token and item_id as response.
@@ -110,7 +103,10 @@ router.post('/last_90_days_transactions', async function(req, res){
 });
 
 
-///* Helper Methods *///
+////////////////////////////////////
+// Helper Methods 
+////////////////////////////////////
+
 
 const getBalancesForEachAccount = async ( accessTokenArray ) => {
 

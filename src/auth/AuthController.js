@@ -14,10 +14,6 @@ const ethers = require('ethers');
 const User = require('../user/User');
 const deployWallet = require('../../deployment/deploy-wallet');
 
-// // ROUTER ENCODING ATRIBUTES 
-// router.use(bodyParser.urlencoded({ extended: false }));
-// router.use(bodyParser.json());
-
 ///* Auth Routes *///
 
 // POST: CREATE NEW USER
