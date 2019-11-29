@@ -35,7 +35,7 @@ const generateDecipher = (password, ivString) => {
 
 const encryptData = (data, password) => {
   const plainText = JSON.stringify(data)
-  const cipher = generateCipher(password, "IdeallyCryptographicallyRandom")
+  const cipher = generateCipher(password.toString('hex'), "IdeallyCryptographicallyRandom")
 
   let encrypted = cipher.update(plainText, 'binary', 'hex')
   encrypted += cipher.final('hex')
@@ -54,21 +54,10 @@ const decryptData = (cipherText, password) => {
 ////////////////////////////////////////////////////////////////
 
 const establishDH = (size) => {
-  // console.time("\ndiffieHellman\n")
   const dH = crypto.createDiffieHellman( parseInt(size) )
-  // console.timeEnd("\ndiffieHellman\n")
-  // console.time("\nkey\n")
   const key = dH.generateKeys()
-  ////////////////////////////////////////
-  // serverDH.generateKeys()
-  // const key = serverDH.getPublicKey()
-  // console.timeEnd("\nkey\n")
-
-  // console.time("\nPrime and Generator\n")
   const prime = dH.getPrime()
   const generator = dH.getGenerator()
-  // console.timeEnd("\nPrime and Generator\n")
-
 
   return {
     publicKey: key,

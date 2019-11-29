@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const helper = require('./../../helper')
+const helper = require('../../utils/crypto-utils/helper')
 
 router.get('', (req, res) => {
   console.log("Request SC")
@@ -21,7 +21,11 @@ router.post('', (req, res) => {
   console.log("Establish SC")
 
   if (req.body.cKey) {
-    req.session.secret = helper.calculateSecret(req.body.cKey, req.session.serverKey, req.session.prime, req.session.generator)
+    req.session.secret = helper.calculateSecret(
+      req.body.cKey, 
+      req.session.serverKey, 
+      req.session.prime, 
+      req.session.generator)
 
     res.status(200).send({ error: false, message: 'Connection established' })
   } else {
