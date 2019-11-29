@@ -1,29 +1,38 @@
 const express = require('express');
 const router = express.Router();
-const helper = require('./../../helper')
+const { generateDH, calculateSecret } = require('./../../helper')
 
 router.get('', (req, res) => {
-  console.log("Request SC")
-  const { publicKey, privateKey, prime, generator } = helper.establishDH(process.env.BIT_SIZE)
+  console.log("SC Requested!")
+  const { 
+    prime, 
+    generator,
+    publicKey, 
+    privateKey, 
+  } = generateDH(process.env.BIT_SIZE)
 
   req.session.prime = prime
   req.session.generator = generator
   req.session.serverKey = privateKey
 
   res.status(200).send({
-    key: publicKey,
     prime,
     generator,
+    pubKey: publicKey,
   })
 })
 
 router.post('', (req, res) => {
-  console.log("Establish SC")
+  if (req.body.key) {
+    req.session.secret = calculateSecret({
+      primeHex: req.session.prime, 
+      generatorHex: req.session.generator,
+      pubKeyHex: req.body.key, 
+      serverPrivateKeyHex: req.session.serverKey, 
+    })
 
-  if (req.body.cKey) {
-    req.session.secret = helper.calculateSecret(req.body.cKey, req.session.serverKey, req.session.prime, req.session.generator)
-
-    res.status(200).send({ error: false, message: 'Connection established' })
+    console.log("SC Established!")
+    res.status(200).send({ message: 'Connection established' })
   } else {
     res.status(555).send('Could not establish secure connection')
   }

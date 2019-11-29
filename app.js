@@ -27,10 +27,11 @@ app.use(session({
   })
 )
 
+// CHECK SESSION/DH SECRET STATUS
 app.use((req, res, next) => {
   if (req.session.cookie.maxAge < 0) return res.status(401).send("Session expired")
 
-  if (req.session.secret) res.sendEnc = (body) => res.send( helper.encryptData(body, Buffer.from(req.session.secret.data)) )
+  if (req.session.secret) res.sendEnc = (body) => res.send( helper.encryptData(body, req.session.secret) )
 
   next()
 })
@@ -43,9 +44,8 @@ app.use(bodyParser.json());
 const decryptBody = (req, res, next) => {
   console.log('_______________________________________')
   console.log("Encrypted body: ", req.body)
-  if(req.body.data) req.body = helper.decryptData(req.body.data, Buffer.from(req.session.secret.data))
+  if(req.body.data) req.body = helper.decryptData(req.body.data, req.session.secret)
   console.log("Decrypted body: ", req.body, "\n")
-  console.log('_______________________________________')
   next()
 }
 

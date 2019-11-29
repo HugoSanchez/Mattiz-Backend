@@ -1,12 +1,19 @@
 const crypto = require('crypto')
 
 const generateKey = (password) => {
+  /* 
+    Generate a key from a hex string of any length by hashing it to create a 32bit key
+  */
   return crypto.createHash('sha256')
           .update(password)
           .digest()
 }
 
 const generateIv = (ivString) => {
+  /* 
+    Generate an Initital Vector string from a plaintext string of any length by hashing it 
+    to create a 32bit key, from which we copy the frist 16bits (as the IV needs to be 16bit)
+  */
   const iv16Bytes = Buffer.allocUnsafe(16)
   const iv32Bytes = crypto.createHash('sha256')
                     .update(ivString)
@@ -18,6 +25,9 @@ const generateIv = (ivString) => {
 }
 
 const generateCipher = (password, ivString) => {
+  /*
+    Generate cipher from a 32bit `password` and 16bit `ivString`
+  */
   return crypto.createCipheriv(
     'aes256', 
     generateKey(password),
@@ -26,6 +36,9 @@ const generateCipher = (password, ivString) => {
 }
 
 const generateDecipher = (password, ivString) => {
+  /*
+    Generate decipher from a 32bit `password` and 16bit `ivString`
+  */
   return crypto.createDecipheriv(
     'aes256', 
     generateKey(password),
@@ -34,6 +47,13 @@ const generateDecipher = (password, ivString) => {
 }
 
 const encryptData = (data, password) => {
+  /*
+    Takes in a `data` object and a `password` hex string
+
+    Returns an object with { data: encryptedData }
+  */
+
+  // console.log("encryptData()...")
   const plainText = JSON.stringify(data)
   const cipher = generateCipher(password, "IdeallyCryptographicallyRandom")
 
@@ -44,64 +64,62 @@ const encryptData = (data, password) => {
 }
 
 const decryptData = (cipherText, password) => {
-  const decipher = generateDecipher(password.toString('hex'), "IdeallyCryptographicallyRandom")
+  /*
+    Takes in a `cipherText` and a `password` hex string
+
+    Returns the decrypted data as the original encrypted object
+  */
+
+  // console.log("decryptData()...")
+  const decipher = generateDecipher(password, "IdeallyCryptographicallyRandom")
 
   let decrypted = decipher.update(cipherText, 'hex', 'binary')
   decrypted += decipher.final('binary')
 
   return JSON.parse(decrypted)
 }
-////////////////////////////////////////////////////////////////
 
-const establishDH = (size) => {
-  // console.time("\ndiffieHellman\n")
+const generateDH = (size) => {
+  /*
+    Takes in an integer `size` to generate a DiffieHelman instance with a prime of {`size`}bits
+
+    Returns the `prime`, `generator`, `publicKey`, and `privateKey` as hex strings
+  */
+  // console.log("generateDH()...")
   const dH = crypto.createDiffieHellman( parseInt(size) )
-  // console.timeEnd("\ndiffieHellman\n")
-  // console.time("\nkey\n")
-  const key = dH.generateKeys()
-  ////////////////////////////////////////
-  // serverDH.generateKeys()
-  // const key = serverDH.getPublicKey()
-  // console.timeEnd("\nkey\n")
 
-  // console.time("\nPrime and Generator\n")
-  const prime = dH.getPrime()
-  const generator = dH.getGenerator()
-  // console.timeEnd("\nPrime and Generator\n")
-
+  const hexify = intArr => intArr.toString('hex')
 
   return {
-    publicKey: key,
-    privateKey: dH.getPrivateKey(),
-    // key: dH.getPublicKey(),
-    prime,
-    // prime: dH.getPrime(),
-    generator,
-    // generator: dH.getGenerator(),
-    establishSecret: (key) => dH.computeSecret(key),
+    prime: hexify(dH.getPrime()),
+    generator: hexify(dH.getGenerator()),
+    publicKey: hexify(dH.generateKeys()),
+    privateKey: hexify(dH.getPrivateKey()),
   }
 }
 
-const calculateSecret = (clientKey, serverPrivateKey, prime, generator) => {
-  const cKeyBuffer = Buffer.from(clientKey.data)
-  const privateKeyBuffer = Buffer.from(serverPrivateKey.data)
-  const primeBuffer = Buffer.from(prime.data)
-  const generatorBuffer = Buffer.from(generator.data)
+const calculateSecret = ({ primeHex, generatorHex,  pubKeyHex, serverPrivateKeyHex }) => {
+  /*
+    Takes in `primeHex`, `generatorHex`, `pubKeyHex`, and `serverPrivateKeyHex` as hex strings
+    to calculate a DiffieHelman instance and compute a secret using the pubKeyBuffer
+
+    Returns `secret` as hex string
+  */
+  // console.log("calculateSecret()...")
+  const pubKeyBuffer = Buffer.from(pubKeyHex, 'hex')
+  const primeBuffer = Buffer.from(primeHex, 'hex')
+  const generatorBuffer = Buffer.from(generatorHex, 'hex')
+  const serverPrivateKeyBuffer = Buffer.from(serverPrivateKeyHex, 'hex')
 
   const dH = crypto.createDiffieHellman(primeBuffer, generatorBuffer)
+  dH.setPrivateKey(serverPrivateKeyBuffer)
 
-  dH.setPrivateKey(privateKeyBuffer)
-  const secret = dH.computeSecret(cKeyBuffer)
-
-  return secret
+  return dH.computeSecret(pubKeyBuffer).toString('hex')
 }
-
-////////////////////////////////////////////////////////////////
-
 
 module.exports = {
   encryptData,
   decryptData,
-  establishDH,
+  generateDH,
   calculateSecret,
 }

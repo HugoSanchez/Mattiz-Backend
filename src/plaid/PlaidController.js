@@ -39,6 +39,7 @@ const plaidClient = new plaid.Client (
 
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
 router.post('/get_access_token', function(req, res) {
+    console.log("Hello")
     // First, get the public_token and return error if it doesn't exist. 
     if ( !req.body.public_token ) return res.status(401).sendEnc({ error: true, message: 
         'No token provided.' });
