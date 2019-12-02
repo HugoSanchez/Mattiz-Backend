@@ -1,5 +1,5 @@
 const WalletFactory = require('../build/WalletFactory');
-const deployManager = require('../utils/argent-utils/deploy-manager');
+const deployManager = require('../utils/argent/deploy-manager');
 
 const deployWallet = async (network, ownerAddress) => {
     // Initiate Deployment Manager.

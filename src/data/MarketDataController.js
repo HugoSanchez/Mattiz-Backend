@@ -8,26 +8,17 @@ const bodyParser = require('body-parser');
 const moment = require('moment');
 const axios = require('axios');
 
-// LOAD ENVIRONMENT VARIABLES
-require('dotenv').config()
-
-
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
-
 ///* Data Routes *///
-
 
 // POST: GET ETH HISTORICAL DATA.
 router.post('/get_historical_data', function(req, res) {
     // Get the currency from the body.
-    const currency = req.body.currency;
+    const currency = req.body.data.currency;
     // Get current time up to minutes.
     const dayAndHour = moment().format().slice(0, 13)
     const minutes = moment().format().slice(14, 16)
     // Then subtract based on timeframe.
-    const startTime = start(req.body.timeframe)
+    const startTime = start(req.body.data.timeframe)
     
     // Call Nomics API.
     axios.get('https://api.nomics.com/v1/exchange-rates/history?key=' 
@@ -36,7 +27,7 @@ router.post('/get_historical_data', function(req, res) {
     + '&end=' + dayAndHour + '%3A' + minutes + '%3A00Z')
         // Then send status 200 with rates array.
         .then( async response => {
-            res.status(200).send({ 
+            res.status(200).sendEnc({ 
                 error: false, 
                 rates: response.data.map(d =>  parseFloat(d.rate).toFixed(2))
             })

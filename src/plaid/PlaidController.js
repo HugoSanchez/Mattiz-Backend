@@ -9,13 +9,6 @@ const bodyParser = require('body-parser');
 const moment = require('moment');
 const plaid = require('plaid');
 
-// LOAD ENVIRONMENT VARIABLES
-require('dotenv').config()
-
-// ROUTER ENCODING ATRIBUTES 
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
-
 // PLAID CONFIG
 const client_id = process.env.PLAID_CLIENT_ID;
 const secret = process.env.PLAID_SECRET;
@@ -40,18 +33,18 @@ const plaidClient = new plaid.Client (
 // POST: EXCHANGES PUBLIC TOKEN FOR ACCESS TOKEN.
 router.post('/get_access_token', function(req, res) {
     // First, get the public_token and return error if it doesn't exist. 
-    if ( !req.body.public_token ) return res.status(401).send({ error: true, message: 
+    if ( !req.body.data.public_token ) return res.status(401).sendEnc({ error: true, message: 
         'No token provided.' });
     
     // Then call Plaid method to exchange token.
-    plaidClient.exchangePublicToken(req.body.public_token, function(error, token) {
+    plaidClient.exchangePublicToken(req.body.data.public_token, function(error, token) {
         // If error, return error message. 
-        if ( error ) return res.status(401).send({ error: true, message: 
+        if ( error ) return res.status(401).sendEnc({ error: true, message: 
         JSON.stringify(error) });
         
         // If not, send access_token and item_id as response.
         console.log('ACC_TOKEN: ', token.access_token)
-        return res.status(200).send({ error: false, 
+        return res.status(200).sendEnc({ error: false, 
         access_token: token.access_token, item_id: token.item_id });
     });
 });
@@ -59,12 +52,12 @@ router.post('/get_access_token', function(req, res) {
 // POST: RETURNS HIGH-LEVEL ACCOUNTS INFORMATION
 router.post('/accounts', function(req, res) {
 
-    getBalancesForEachAccount(req.body.accessTokenArray)
+    getBalancesForEachAccount(req.body.data.accessTokenArray)
         .then(result => { return res.status(200)
-            .send({ error: false, balance: JSON.stringify(result) })
+            .sendEnc({ error: false, balance: JSON.stringify(result) })
         })
         .catch(error => { return res.status(401)
-            .send({ error: true, message:  JSON.stringify(error)})
+            .sendEnc({ error: true, message:  JSON.stringify(error)})
         })
 });
 
@@ -77,14 +70,14 @@ router.post('/yearly_transactions', function(req, res) {
     let endDate = moment().format('YYYY-MM-DD')
 
      // Iterate over every access token, and return the asociated transactions.
-     retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate)
+     retrieveTransactionsForEachAccount(req.body.data.accessTokenArray, startDate, endDate)
         // Return all transactions merged toghether and sorted by date.
         .then(result => { return res.status(200)
-            .send({ error: false, data: sortByDate(result[0].concat(result[1])) })
+            .sendEnc({ error: false, data: sortByDate(result[0].concat(result[1])) })
         })
         // Return error if occurs (this should be tested), 
         .catch(error => { return res.status(401)
-            .send({ error: true, message:  JSON.stringify(error)})
+            .sendEnc({ error: true, message:  JSON.stringify(error)})
         });
 });
 
@@ -97,14 +90,14 @@ router.post('/last_90_days_transactions', async function(req, res){
     let endDate = moment().format('YYYY-MM-DD')    
 
     // Iterate over every access token, and return the asociated transactions.
-    retrieveTransactionsForEachAccount(req.body.accessTokenArray, startDate, endDate)
+    retrieveTransactionsForEachAccount(req.body.data.accessTokenArray, startDate, endDate)
         // Return all transactions merged toghether and sorted by date.
         .then(result => { return res.status(200)
-            .send({ error: false, tx: sortByDate(result[0].concat(result[1])) })
+            .sendEnc({ error: false, tx: sortByDate(result[0].concat(result[1])) })
         })
         // Return error if occurs (this should be tested), 
         .catch(error => { return res.status(401)
-            .send({ error: true, message:  JSON.stringify(error)})
+            .sendEnc({ error: true, message:  JSON.stringify(error)})
         });
 });
 
