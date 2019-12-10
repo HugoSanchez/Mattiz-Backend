@@ -20,7 +20,7 @@
     "express": "^4.16.2",
     "jsonwebtoken": "^8.5.0",
     "moment": "^2.24.0",
-    "mongoose": "^5.0.1",
+    "mongoose": "^5.7.5",
     "plaid": "^3.0.0",
     "promise": "^8.0.2"
   },
