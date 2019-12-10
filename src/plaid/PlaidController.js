@@ -5,7 +5,6 @@
 // SERVER SIDE DEPENDENCIES
 const express = require('express');
 const router = express.Router();
-const bodyParser = require('body-parser');
 const moment = require('moment');
 const plaid = require('plaid');
 
