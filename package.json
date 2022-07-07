@@ -19,7 +19,7 @@
     "ethers": "^4.0.39",
     "express": "^4.16.2",
     "jsonwebtoken": "^8.5.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "mongoose": "^5.0.1",
     "plaid": "^3.0.0",
     "promise": "^8.0.2"
