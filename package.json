@@ -18,7 +18,7 @@
     "etherlime-lib": "^1.1.5",
     "ethers": "^4.0.39",
     "express": "^4.16.2",
-    "jsonwebtoken": "^8.5.0",
+    "jsonwebtoken": "^9.0.0",
     "moment": "^2.24.0",
     "mongoose": "^5.0.1",
     "plaid": "^3.0.0",
